@@ -23,7 +23,7 @@ public class PlayerAttack : MonoBehaviour
         if(ypos < -80 && !damaged)
         {
             gameObject.transform.position += new Vector3(0, 1) * curspeed * Time.deltaTime;
-            img.color += new Color(0, 0, 0, curspeed / 100);
+            img.color += new Color(0, 0, 0, curspeed / 50);
             return;
         }
 
@@ -52,8 +52,53 @@ public class PlayerAttack : MonoBehaviour
         if (ypos > -170)
         {
             gameObject.transform.position -= new Vector3(0, 1) * curspeed * Time.deltaTime;
-            img.color -= new Color(0, 0, 0, curspeed / 100);
+            img.color -= new Color(0, 0, 0, curspeed / 25);
             return;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Enemy")
+        {
+            RectTransform rect = GameObject.Find("EnemyHP").GetComponent<RectTransform>();
+            EnemyData enemyData = EnemyData.Instance;
+            enemyData.healthPoints -= PlayerData.Instance.damage;
+
+            rect.sizeDelta = new Vector2(enemyData.healthPoints / enemyData.maxHealthPoints * 100, rect.sizeDelta.y);
+            GameObject.Find("Attacking").GetComponent<AudioSource>().Play();
+            StartCoroutine(Shake());
+            StartCoroutine(Blink());
+        }
+    }
+    IEnumerator Shake()
+    {
+        RectTransform rect = GameObject.Find("Enemy").GetComponent<RectTransform>();
+        float curdur = 0f, duration = .5f;
+        while (curdur < duration)
+        {
+            float xOff = Random.Range(-0.4f, 0.4f),
+                yOff = Random.Range(-0.4f, 0.4f);
+
+            int plus = Random.Range(0, 1);
+            rect.anchoredPosition += new Vector2(xOff, yOff) * (plus == 1 ? -1 : 1);
+
+            curdur += Time.deltaTime;
+            yield return null;
+        }
+    }
+    IEnumerator Blink()
+    {
+        Image img = GameObject.Find("Enemy").GetComponent<Image>();
+        float curdur = 0f, duration = 1f, time = .15f;
+
+        while (curdur < duration)
+        {
+            img.color -= new Color(0, 0, 0, 255);
+            yield return new WaitForSeconds(time);
+            img.color += new Color(0, 0, 0, 255);
+            yield return new WaitForSeconds(time);
+            curdur += time;
         }
         Destroy(gameObject);
     }

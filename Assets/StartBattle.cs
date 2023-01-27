@@ -84,7 +84,7 @@ public class StartBattle : MonoBehaviour
 
         for (int i = 0; i < objs.Length; i++)
         {
-            if (objs[i].name != "Player")
+            if (objs[i].name != "Player" && objs[i].name != "Enemy")
             {
                 trans[i].anchoredPosition = curvec[i];
             }

@@ -23,7 +23,8 @@ public class EnemyData : Singleton<EnemyData>
     public float maxHealthPoints = 100,
         healthPoints = 100,
         attackSpeed1 = 5,
-        damage = 10;
+        walkSpeed = 7,
+        damage = 1;
     public string losingDialog;
 }
 
